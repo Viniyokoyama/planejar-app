@@ -18,8 +18,8 @@ export default async function DashboardPage() {
   const user = await getCurrentUser();
   if (!user) return null;
 
-  let reports: Awaited<ReturnType<typeof prisma.report.findMany>> = [];
-  let businesses: Awaited<ReturnType<typeof prisma.business.findMany>> = [];
+  let reports: any[] = [];
+  let businesses: any[] = [];
   try {
     [reports, businesses] = await Promise.all([
       prisma.report.findMany({
@@ -135,7 +135,7 @@ export default async function DashboardPage() {
           </div>
         ) : (
           <div className="space-y-3">
-            {reports.map((report) => (
+            {reports.map((report: any) => (
               <Link
                 key={report.id}
                 href={`/relatorio/${report.id}`}

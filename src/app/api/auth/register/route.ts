@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { hashPassword, createToken } from "@/lib/auth";
 import { DEMO_USER, isDemoMode } from "@/lib/demo";

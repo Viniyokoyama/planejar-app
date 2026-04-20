@@ -1,0 +1,12 @@
+? No Project Settings found locally. Run `vercel pull` for retrieving them?
+(Y/n)[1A[83G[1B[2K[1A[2K[G? No Project Settings found locally. Run `vercel pull` for retrieving them?
+(Y/n) Y[1A[84G[1B[2K[1A[2K[G? No Project Settings found locally. Run `vercel pull` for retrieving them? yes[80G
+[?25hRetrieving project…
+> Downloading `preview` Environment Variables for eusouyokoyama-8150s-projects/planejar-app
+Downloading
+Created .vercel/.env.preview.local file  [292ms]
+
+> Downloading project settings
+Downloaded project settings to ~/Desktop/Planeja/planejar-app/.vercel/project.json [0ms]
+WARNING! Build not running on Vercel. System environment variables will not be available.
+Installing dependencies...

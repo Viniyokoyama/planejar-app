@@ -42,6 +42,10 @@ export async function getSession() {
 export async function getCurrentUser() {
   const session = await getSession();
   if (!session) return null;
+
+  const { isDemoMode, DEMO_USER } = await import("./demo");
+  if (isDemoMode() && session.userId === DEMO_USER.id) return DEMO_USER;
+
   return prisma.user.findUnique({
     where: { id: session.userId },
     select: { id: true, name: true, email: true, plan: true },

@@ -18,15 +18,21 @@ export default async function DashboardPage() {
   const user = await getCurrentUser();
   if (!user) return null;
 
-  const [reports, businesses] = await Promise.all([
-    prisma.report.findMany({
-      where: { userId: user.id, status: "completed" },
-      orderBy: { createdAt: "desc" },
-      take: 5,
-      include: { business: true },
-    }),
-    prisma.business.findMany({ where: { userId: user.id }, take: 1 }),
-  ]);
+  let reports: Awaited<ReturnType<typeof prisma.report.findMany>> = [];
+  let businesses: Awaited<ReturnType<typeof prisma.business.findMany>> = [];
+  try {
+    [reports, businesses] = await Promise.all([
+      prisma.report.findMany({
+        where: { userId: user.id, status: "completed" },
+        orderBy: { createdAt: "desc" },
+        take: 5,
+        include: { business: true },
+      }),
+      prisma.business.findMany({ where: { userId: user.id }, take: 1 }),
+    ]);
+  } catch {
+    // DB not available in demo mode — empty state is fine
+  }
 
   const modules = [
     {

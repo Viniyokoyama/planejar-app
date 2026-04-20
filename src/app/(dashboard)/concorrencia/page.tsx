@@ -1,0 +1,107 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Users, Loader2 } from "lucide-react";
+
+const SEGMENTOS = [
+  "Alimentação e Bebidas", "Varejo / Loja", "Saúde e Bem-estar",
+  "Serviços", "Educação", "Beleza e Estética", "Tecnologia", "Outro",
+];
+
+export default function ConcorrenciaPage() {
+  const router = useRouter();
+  const [form, setForm] = useState({ businessName: "", segment: "", address: "" });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!form.businessName || !form.segment || !form.address)
+      return setError("Preencha todos os campos.");
+    setLoading(true);
+    setError("");
+    const res = await fetch("/api/concorrencia", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
+    const data = await res.json();
+    setLoading(false);
+    if (!res.ok) return setError(data.error || "Erro na análise.");
+    router.push(`/relatorio/${data.reportId}?polling=true`);
+  }
+
+  return (
+    <div>
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="p-2 bg-violet-100 rounded-lg">
+            <Users className="text-violet-700" size={22} />
+          </div>
+          <h1 className="text-2xl font-bold text-slate-800">Análise de Concorrência</h1>
+        </div>
+        <p className="text-slate-500">
+          A IA mapeia seus concorrentes, analisa avaliações reais e revela pontos fortes, fracos e oportunidades de mercado.
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Nome do seu negócio *</label>
+            <input
+              type="text"
+              required
+              value={form.businessName}
+              onChange={(e) => setForm({ ...form, businessName: e.target.value })}
+              className="w-full px-3 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-violet-500 text-sm"
+              placeholder="Ex: Pizzaria do João"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Segmento *</label>
+            <select
+              required
+              value={form.segment}
+              onChange={(e) => setForm({ ...form, segment: e.target.value })}
+              className="w-full px-3 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-violet-500 text-sm"
+            >
+              <option value="">Selecione</option>
+              {SEGMENTOS.map((s) => <option key={s}>{s}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Endereço do negócio *</label>
+            <input
+              type="text"
+              required
+              value={form.address}
+              onChange={(e) => setForm({ ...form, address: e.target.value })}
+              className="w-full px-3 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-violet-500 text-sm"
+              placeholder="Ex: Rua das Flores, 200, São Paulo - SP"
+            />
+          </div>
+        </div>
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg">
+            {error}
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full flex items-center justify-center gap-2 bg-violet-700 hover:bg-violet-800 text-white font-semibold py-3 px-4 rounded-xl transition-colors disabled:opacity-60"
+        >
+          {loading ? (
+            <><Loader2 size={18} className="animate-spin" /> Mapeando concorrentes...</>
+          ) : (
+            "Mapear concorrência com IA →"
+          )}
+        </button>
+      </form>
+    </div>
+  );
+}
